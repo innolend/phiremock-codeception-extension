@@ -17,6 +17,8 @@
  */
 namespace Codeception\Extension;
 
+use Codeception\Util\Debug;
+
 /**
  * Manages the current running WireMock process.
  */
@@ -50,7 +52,11 @@ class PhiremockProcess
     public function start($ip, $port, $path, $logsPath)
     {
         $this->checkIfProcessIsRunning();
-
+        Debug::debug(
+            'Starting phiremock application with comnmand: '
+            . $this->getCommandPrefix()
+            . "{$path}/phiremock -i {$ip} -p {$port}"
+        );
         $this->process = proc_open(
             $this->getCommandPrefix() . "{$path}/phiremock -i {$ip} -p {$port}",
             $this->createProcessDescriptors($logsPath),
@@ -83,7 +89,8 @@ class PhiremockProcess
      */
     private function checkIfProcessIsRunning()
     {
-        if ($this->process !== null) {
+        if ($this->isRunning()) {
+            Debug::debug('Phiremock is running');
             throw new \Exception('The server is already running');
         }
     }
@@ -104,6 +111,7 @@ class PhiremockProcess
         if (!$this->isRunning()) {
             throw new \Exception('Could not start local phiremock server');
         }
+        Debug::debug('Phiremock is running');
     }
 
     /**
@@ -112,6 +120,7 @@ class PhiremockProcess
     public function stop()
     {
         if (is_resource($this->process)) {
+            Debug::debug('Stopping phiremock application');
             foreach ($this->pipes as $pipe) {
                 if (is_resource($pipe)) {
                     fflush($pipe);

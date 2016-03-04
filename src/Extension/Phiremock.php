@@ -24,7 +24,10 @@ use Codeception\Configuration as Config;
  */
 class Phiremock extends CodeceptionExtension
 {
-    public static $events = [];
+    public static $events = [
+        'suite.before' => 'start',
+        'suite.after' => 'stop'
+    ];
 
     protected $config = [
         'listen'   => '0.0.0.0:8086'
@@ -53,10 +56,18 @@ class Phiremock extends CodeceptionExtension
         parent::__construct($config, $options);
 
         $this->initProcess($process);
+    }
 
+    public function start()
+    {
         list($ip, $port) = explode(':', $this->config['listen']);
         $executablePath = $this->config['bin_path'];
         $this->process->start($ip, $port, $executablePath, $this->config['logs_path']);
+    }
+
+    public function stop()
+    {
+        $this->process->stop();
     }
 
     private function initProcess($process)
@@ -66,13 +77,5 @@ class Phiremock extends CodeceptionExtension
         } else {
             $this->process = $process;
         }
-    }
-
-    /**
-     * Class destructor.
-     */
-    public function __destruct()
-    {
-        $this->process->stop();
     }
 }
