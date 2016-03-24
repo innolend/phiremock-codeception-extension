@@ -19,6 +19,7 @@ namespace Codeception\Extension;
 
 use Codeception\Extension as CodeceptionExtension;
 use Codeception\Configuration as Config;
+
 /**
  * Codeception Extension for Phiremock
  */
@@ -30,7 +31,8 @@ class Phiremock extends CodeceptionExtension
     ];
 
     protected $config = [
-        'listen'   => '0.0.0.0:8086'
+        'listen' => '0.0.0.0:8086',
+        'debug'  => false
     ];
 
     /**
@@ -53,6 +55,7 @@ class Phiremock extends CodeceptionExtension
     ) {
         $this->config['bin_path'] = Config::projectDir() . '../vendor/bin';
         $this->config['logs_path'] = Config::logDir();
+
         parent::__construct($config, $options);
 
         $this->initProcess($process);
@@ -61,8 +64,14 @@ class Phiremock extends CodeceptionExtension
     public function start()
     {
         list($ip, $port) = explode(':', $this->config['listen']);
-        $executablePath = $this->config['bin_path'];
-        $this->process->start($ip, $port, $executablePath, $this->config['logs_path']);
+
+        $this->process->start(
+            $ip,
+            $port,
+            $this->config['bin_path'],
+            $this->config['logs_path'],
+            $this->config['debug']
+        );
     }
 
     public function stop()

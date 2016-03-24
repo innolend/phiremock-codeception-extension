@@ -49,7 +49,7 @@ class PhiremockProcess
      *
      * @throws \Exception
      */
-    public function start($ip, $port, $path, $logsPath)
+    public function start($ip, $port, $path, $logsPath, $debug)
     {
         $this->checkIfProcessIsRunning();
         Debug::debug(
@@ -58,7 +58,7 @@ class PhiremockProcess
             . "{$path}/phiremock -i {$ip} -p {$port}"
         );
         $this->process = proc_open(
-            $this->getCommandPrefix() . "{$path}/phiremock -i {$ip} -p {$port}",
+            $this->getCommandPrefix() . "{$path}/phiremock -i {$ip} -p {$port}" . ($debug? ' -d' : ''),
             $this->createProcessDescriptors($logsPath),
             $this->pipes,
             null,
@@ -139,8 +139,8 @@ class PhiremockProcess
     private function getCommandPrefix()
     {
         if (PHP_OS == 'WIN32' || PHP_OS == 'WINNT' || PHP_OS == 'Windows') {
-            return 'exec ';
+            return '';
         }
-        return '';
+        return 'exec ';
     }
 }
