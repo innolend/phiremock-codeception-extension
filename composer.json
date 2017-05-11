@@ -26,7 +26,7 @@
 	"type" : "project",
 	 "require" : {
         "php" : ">=5.5",
-        "mcustiel/phiremock": "dev-develop",
+        "mcustiel/phiremock": "dev-master",
         "codeception/codeception" : "^2.1"
     },
     "minimum-stability": "dev"
